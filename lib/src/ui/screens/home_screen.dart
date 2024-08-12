@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  final _searchController = TextEditingController();
   bool _isSearching = false;
 
   void _addMovie(Movie movie) {
@@ -64,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: _isSearching
             ? TextField(
+                controller: _searchController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   hintText: 'Search...',
@@ -74,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {});
                 },
               )
+              
             : const Text(
                 'FilmFolio',
                 style: TextStyle(
