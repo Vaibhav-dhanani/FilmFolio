@@ -28,7 +28,6 @@ class MovieList extends StatelessWidget {
             },
             child: Row(
               children: [
-                // Display movie image
                 movie.images.isNotEmpty
                     ? Image.asset(
                         movie.images[0],
@@ -48,7 +47,7 @@ class MovieList extends StatelessWidget {
                         ),
                       ),
                 const SizedBox(width: 16.0),
-                // Movie details
+                
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +67,6 @@ class MovieList extends StatelessWidget {
                         style: const TextStyle(color: Colors.amber),
                       ),
                       const SizedBox(height: 8.0),
-                      // Optionally, add a brief description
                       Text(
                         movie.description,
                         style: const TextStyle(

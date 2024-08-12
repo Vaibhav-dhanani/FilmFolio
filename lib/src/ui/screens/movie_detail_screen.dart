@@ -31,75 +31,64 @@ class MovieDetailScreen extends StatelessWidget {
           },
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset(
-                        movie.images.isNotEmpty
-                            ? movie.images[0]
-                            : 'assets/images/placeholder.png',
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 250.0,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Text(
-                      movie.name,
-                      style: const TextStyle(
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      'Director: ${movie.director}',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      'Type: ${movie.type}',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      'Rating: ${movie.rating}/10',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.amber,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Text(
-                      movie.description,
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 24.0),
-                  ],
-                ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(movie.images[0],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 250.0,
               ),
-            ]),
-          ),
-        ],
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              movie.name,
+              style: const TextStyle(
+                fontSize: 28.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Director: ${movie.director}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Type: ${movie.type}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Rating: ${movie.rating}/10',
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Colors.amber,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              movie.description,
+              style: const TextStyle(
+                fontSize: 14.0,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 24.0),
+          ],
+        ),
       ),
     );
   }
