@@ -15,9 +15,7 @@ class MovieItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            movie.images.isNotEmpty
-                ? movie.images[0]
-                : 'assets/images/placeholder.png',
+            movie.images[0],
             fit: BoxFit.cover,
             width: double.infinity,
             height: 200.0,

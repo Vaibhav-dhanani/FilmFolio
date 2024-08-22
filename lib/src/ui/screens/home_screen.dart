@@ -76,18 +76,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {});
                 },
               )
-              
             : const Text(
-                'FilmFolio',
+                'FILMFOLIO',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                  color: Colors.white,
+                  letterSpacing: 1.5,
+                  color: Colors.amber,
                 ),
               ),
         backgroundColor: Colors.black,
-        elevation: 4.0,
+        elevation: 0.0,
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
@@ -107,22 +106,10 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.black.withOpacity(0.8),
-                Colors.black.withOpacity(0.6)
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
       ),
       body: MovieList(
         movies: _movies.where((movie) {
-          final query = _searchController.text.toLowerCase();
+          String query = _searchController.text.toLowerCase();
           return movie.name.toLowerCase().contains(query) ||
               movie.director.toLowerCase().contains(query);
         }).toList(),
