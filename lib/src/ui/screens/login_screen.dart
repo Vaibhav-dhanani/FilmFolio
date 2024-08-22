@@ -1,6 +1,7 @@
+import 'package:filmfolio/src/services/auth_service.dart';
 import 'package:filmfolio/src/ui/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:filmfolio/src/services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -12,10 +13,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login(String email,String password) async
-  {
-    final AuthService auth = AuthService();
-    await auth.signInWithEmailPassword(email, password);
+  void _login(BuildContext context) async {
+    try {
+      final AuthService auth = AuthService();
+      await auth.signInWithEmailPassword(
+          _emailController.text, _passwordController.text);
+    } on Exception catch (e) {
+      showDialog(
+          context: context,
+          builder: ((context) => AlertDialog(
+                title: Text(e.toString()),
+              )),);
+    }
   }
 
   @override
@@ -40,8 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Password TextField
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -52,23 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 24.0),
-
-            // Login Button
             ElevatedButton(
-              onPressed: () {
-                // Handle login logic
-                String email = _emailController.text;
-                String password = _passwordController.text;
-                _login(email,password);
-              },
+              onPressed: () => _login(context),
               child: Text('Login'),
             ),
-
-            // Register Link
             TextButton(
               onPressed: () {
-                // Navigate to the registration page
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
@@ -81,5 +78,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

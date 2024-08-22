@@ -1,3 +1,4 @@
+import 'package:filmfolio/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -8,6 +9,20 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  void _logOut(BuildContext context) async {
+    try {
+      final AuthService auth = AuthService();
+      await auth.signOut();
+    } on Exception catch (e) {
+      showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+              title: Text(e.toString()),
+            )),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,9 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
-              onTap: () {
-                // Handle Logout
-              },
+              onTap: () => _logOut(context),
             ),
           ],
         ),
