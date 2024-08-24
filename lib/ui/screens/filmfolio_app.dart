@@ -1,8 +1,8 @@
+import 'package:filmfolio/ui/screens/watchlist_screen.dart';
 import 'package:flutter/material.dart';
-import './category_screen.dart';
-import './home_screen.dart';
-import './user_account_screen.dart';
-import './watchlist_screen.dart';
+import 'category_screen.dart';
+import 'home_screen.dart';
+import 'user_account_screen.dart';
 
 class FilmfolioApp extends StatefulWidget {
   const FilmfolioApp({super.key});

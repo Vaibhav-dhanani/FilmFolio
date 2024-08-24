@@ -1,5 +1,5 @@
-import 'package:filmfolio/src/services/auth_gate.dart';
-import 'package:filmfolio/src/services/firebase_options.dart';
+import 'package:filmfolio/services/auth_gate.dart';
+import 'package:filmfolio/services/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 

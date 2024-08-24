@@ -1,4 +1,4 @@
-import 'package:filmfolio/src/models/movie.dart';
+import 'package:filmfolio/models/movie.dart';
 import 'package:flutter/material.dart';
 
 class MovieDetailScreen extends StatelessWidget {

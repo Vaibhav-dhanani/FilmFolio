@@ -1,6 +1,8 @@
-import 'package:filmfolio/src/services/auth_service.dart';
-import 'package:filmfolio/src/ui/screens/home_screen.dart';
-import 'package:filmfolio/src/ui/screens/login_screen.dart';
+import 'package:filmfolio/controllers/user_controller.dart';
+import 'package:filmfolio/services/auth_service.dart';
+import 'package:filmfolio/ui/screens/filmfolio_app.dart';
+import 'package:filmfolio/ui/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,16 +13,18 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   void _register(BuildContext context) async {
+    final name = _nameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields')),
       );
@@ -36,16 +40,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final auth = AuthService();
-      await auth.signUpWithEmailPassword(email, password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    } on Exception catch (e) {
+      UserCredential userCredential = await auth.signUpWithEmailPassword(email, password);
+
+      if (userCredential.user != null) {
+        final UserController userController = UserController();
+        await userController.createUser(userCredential.user!.uid, name, email);
+        await userController.saveUserToLocalStorage(userCredential.user!.uid, name, email);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FilmfolioApp()),
+        );
+      }
+    } catch (e) {
       showDialog(
         context: context,
         builder: ((context) => AlertDialog(
-          title: Text(e.toString()),
+          title: Text('Error'),
+          content: Text(e.toString()),
         )),
       );
     }
@@ -63,20 +74,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+              style: TextStyle(color: Colors.white),
+              keyboardType: TextInputType.name,
+            ),
+            SizedBox(height: 16.0),
+            TextField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
+              style: TextStyle(color: Colors.white),
               keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 16.0),
+
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
               ),
+              style: TextStyle(color: Colors.white),
               obscureText: true,
             ),
             SizedBox(height: 16.0),
@@ -86,6 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 labelText: 'Confirm Password',
                 border: OutlineInputBorder(),
               ),
+              style: TextStyle(color: Colors.white),
               obscureText: true,
             ),
             SizedBox(height: 24.0),

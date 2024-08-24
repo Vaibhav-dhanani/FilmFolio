@@ -1,6 +1,6 @@
-import 'package:filmfolio/src/models/movie.dart';
-import 'package:filmfolio/src/ui/widgets/add_movie_form.dart';
-import 'package:filmfolio/src/ui/widgets/movie_list.dart';
+import 'package:filmfolio/models/movie.dart';
+import 'package:filmfolio/ui/widgets/add_movie_form.dart';
+import 'package:filmfolio/ui/widgets/movie_list.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {

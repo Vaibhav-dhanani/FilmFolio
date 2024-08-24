@@ -1,6 +1,6 @@
-import 'package:filmfolio/src/models/movie.dart';
+import 'package:filmfolio/models/movie.dart';
 import 'package:flutter/material.dart';
-import 'package:filmfolio/src/ui/screens/movie_detail_screen.dart';
+import 'package:filmfolio/ui/screens/movie_detail_screen.dart';
 
 class MovieList extends StatelessWidget {
   final List<Movie> movies;

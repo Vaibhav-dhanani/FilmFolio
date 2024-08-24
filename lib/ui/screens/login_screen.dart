@@ -1,5 +1,5 @@
-import 'package:filmfolio/src/services/auth_service.dart';
-import 'package:filmfolio/src/ui/screens/register_screen.dart';
+import 'package:filmfolio/services/auth_service.dart';
+import 'package:filmfolio/ui/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

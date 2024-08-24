@@ -1,4 +1,5 @@
-import 'package:filmfolio/src/services/auth_service.dart';
+import 'package:filmfolio/services/auth_service.dart';
+import 'package:filmfolio/ui/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -46,7 +47,11 @@ class _AccountScreenState extends State<AccountScreen> {
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
               onTap: () {
-                // Navigate to Profile
+                Navigator.push(
+                    (context),
+                    MaterialPageRoute(
+                      builder: (context) => UserProfileScreen(),
+                    ));
               },
             ),
             ListTile(
