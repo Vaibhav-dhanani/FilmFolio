@@ -28,13 +28,13 @@ class MovieList extends StatelessWidget {
             },
             child: Row(
               children: [
-                movie.images.isNotEmpty
+                (movie.images != null && movie.images!.isNotEmpty)
                     ? Image.asset(
-                        movie.images[0],
-                        fit: BoxFit.cover,
-                        width: 120.0,
-                        height: 180.0,
-                      )
+                       movie.images![0],  // Access the first image safely
+                       fit: BoxFit.cover,
+                       width: 120.0,
+                       height: 180.0,
+                    )
                     : Container(
                         color: Colors.grey[800],
                         width: 120.0,
@@ -54,7 +54,7 @@ class MovieList extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        movie.name,
+                        movie.name ?? 'unknown',
                         style: const TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -63,12 +63,14 @@ class MovieList extends StatelessWidget {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        'Rating: ${movie.rating.toStringAsFixed(1)}/10',
+                        movie.rating != null
+                            ? 'Rating: ${movie.rating!.toStringAsFixed(1)}/10'
+                            : 'Rating: N/A',  // Fallback in case rating is null
                         style: const TextStyle(color: Colors.amber),
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        movie.description,
+                        movie.description ?? 'write',
                         style: const TextStyle(
                           color: Colors.white70,
                         ),

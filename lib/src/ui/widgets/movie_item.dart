@@ -15,7 +15,9 @@ class MovieItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            movie.images[0],
+            (movie.images != null && movie.images!.isNotEmpty)
+                ? movie.images![0]  // Safely access the first image
+                : 'assets/images/placeholder.png',
             fit: BoxFit.cover,
             width: double.infinity,
             height: 200.0,
@@ -26,7 +28,7 @@ class MovieItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  movie.name,
+                  movie.name ?? 'unknown',
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -50,7 +52,7 @@ class MovieItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  movie.description,
+                  movie.description ?? 'write',
                   style: const TextStyle(color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

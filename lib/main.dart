@@ -1,5 +1,6 @@
 import 'package:filmfolio/src/services/auth_gate.dart';
 import 'package:filmfolio/src/services/firebase_options.dart';
+import 'package:filmfolio/src/ui/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,8 @@ class FilmFolio extends StatelessWidget {
           titleTextStyle: TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
-      home: const AuthGate(),
+     home: const AuthGate(),
+
     );
   }
 }

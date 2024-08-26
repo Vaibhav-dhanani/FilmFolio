@@ -30,22 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  font_awesome_flutter: ^10.7.0
   cupertino_icons: ^1.0.6
   firebase_core: ^3.3.0
   firebase_auth: ^5.1.4
+  # cloud_firestore: ^4.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
@@ -53,7 +46,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -65,7 +57,16 @@ flutter:
     - assets/images/inception.jpg
     - assets/images/the_dark_knight.jpg
     - assets/images/interstellar.jpg
-
+    - assets/images/popular_images/Dune_(2021_film).jpg
+    - assets/images/popular_images/narcos.jpg
+    - assets/images/popular_images/shang_chi.jpg
+    - assets/images/popular_images/stranger_things.jpg
+    - assets/images/for_your_images/
+    - assets/images/detective.jpg
+    - assets/images/fantasy.jpg
+    - assets/images/history.jpg
+    - assets/images/horror.jpg
+    - assets/images/action.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

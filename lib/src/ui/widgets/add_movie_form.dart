@@ -99,7 +99,7 @@ class _AddMovieFormState extends State<AddMovieForm> {
               final newMovie = Movie(
                 name: _nameController.text,
                 description: _descriptionController.text,
-                images: [],
+                images: "",
                 rating: double.parse(_ratingController.text),
                 type: _typeController.text,
                 director: _directorController.text,

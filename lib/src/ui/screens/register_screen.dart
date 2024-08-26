@@ -97,7 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account? "),
+                Text("Already have an account? ",style: TextStyle(color: Colors.amber),),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushReplacement(
@@ -108,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Text(
                     "Tap here to login",
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.amber,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -20,10 +20,10 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text, _passwordController.text);
     } on Exception catch (e) {
       showDialog(
-          context: context,
-          builder: ((context) => AlertDialog(
-                title: Text(e.toString()),
-              )),);
+        context: context,
+        builder: ((context) => AlertDialog(
+          title: Text(e.toString()),
+        )),);
     }
   }
 
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
               },
-              child: Text('Don\'t have an account? Register here'),
+              child: Text('Don\'t have an account? Register here',style: TextStyle(color: Colors.amber),),
             ),
           ],
         ),

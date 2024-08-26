@@ -11,7 +11,7 @@ class MovieDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          movie.name,
+          movie.name ?? 'unknown',
           style: const TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
@@ -38,7 +38,9 @@ class MovieDetailScreen extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(movie.images[0],
+              child: Image.asset((movie.images != null && movie.images!.isNotEmpty)
+                  ? movie.images![0]  // Safely access the first image
+                  : 'assets/images/placeholder.png',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 250.0,
@@ -46,7 +48,7 @@ class MovieDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Text(
-              movie.name,
+              movie.name ?? 'unknown',
               style: const TextStyle(
                 fontSize: 28.0,
                 fontWeight: FontWeight.bold,
@@ -80,7 +82,7 @@ class MovieDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Text(
-              movie.description,
+              movie.description ?? 'write',
               style: const TextStyle(
                 fontSize: 14.0,
                 color: Colors.white70,
