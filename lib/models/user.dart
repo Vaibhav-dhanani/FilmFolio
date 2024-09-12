@@ -1,4 +1,3 @@
-import 'package:filmfolio/models/rating.dart';
 import 'package:filmfolio/models/watchitem.dart';
 
 class User {

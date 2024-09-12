@@ -62,86 +62,93 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-              ),
-              style: TextStyle(color: Colors.white),
-              keyboardType: TextInputType.name,
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-              style: TextStyle(color: Colors.white),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16.0),
-
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              style: TextStyle(color: Colors.white),
-              obscureText: true,
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _confirmPasswordController,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(),
-              ),
-              style: TextStyle(color: Colors.white),
-              obscureText: true,
-            ),
-            SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: () => _register(context),
-              child: Text('Register'),
-            ),
-            SizedBox(height: 16.0),
-            Row(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account? "),
-                GestureDetector(
-                  onTap: () {
+                SizedBox(height: 40),
+                Icon(
+                  Icons.movie,
+                  size: 80,
+                  color: Colors.amber,
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Join FilmFolio',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 40),
+                _buildTextField(_nameController, 'Name', Icons.person),
+                SizedBox(height: 20),
+                _buildTextField(_emailController, 'Email', Icons.email),
+                SizedBox(height: 20),
+                _buildTextField(_passwordController, 'Password', Icons.lock, isPassword: true),
+                SizedBox(height: 20),
+                _buildTextField(_confirmPasswordController, 'Confirm Password', Icons.lock, isPassword: true),
+                SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () => _register(context),
+                  child: Text('Register', style: TextStyle(fontSize: 18)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
                   child: Text(
-                    "Tap here to login",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Already have an account? Login here',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword,
+      style: TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.amber),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.amber, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        prefixIcon: Icon(icon, color: Colors.amber),
       ),
     );
   }

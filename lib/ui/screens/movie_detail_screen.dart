@@ -1,4 +1,9 @@
 import 'package:filmfolio/models/movie.dart';
+import 'package:filmfolio/ui/widgets/content_player.dart';
+import 'package:filmfolio/ui/widgets/movie_info.dart';
+import 'package:filmfolio/ui/widgets/movie_poster.dart';
+import 'package:filmfolio/ui/widgets/movie_title.dart';
+import 'package:filmfolio/ui/widgets/secsons_info.dart';
 import 'package:flutter/material.dart';
 
 class MovieDetailScreen extends StatelessWidget {
@@ -9,84 +14,47 @@ class MovieDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          movie.name,
-          style: const TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.black.withOpacity(0.8),
-        elevation: 4.0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.amber,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      appBar: _buildAppBar(context),
+      body: _buildBody(),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        movie.name,
+        style: const TextStyle(
+          fontSize: 22.0,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+          color: Colors.white,
         ),
       ),
-      body: SingleChildScrollView(
+      backgroundColor: Colors.black.withOpacity(1),
+      elevation: 4.0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.amber),
+        onPressed: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Container(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(movie.images[0],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 250.0,
-              ),
-            ),
+            MoviePoster(movie: movie),
             const SizedBox(height: 16.0),
-            Text(
-              movie.name,
-              style: const TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            MovieTitle(movie: movie),
             const SizedBox(height: 8.0),
-            Text(
-              'Director: ${movie.director}',
-              style: const TextStyle(
-                fontSize: 16.0,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              'Type: ${movie.type}',
-              style: const TextStyle(
-                fontSize: 16.0,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              'Rating: ${movie.rating}/10',
-              style: const TextStyle(
-                fontSize: 16.0,
-                color: Colors.amber,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Text(
-              movie.description,
-              style: const TextStyle(
-                fontSize: 14.0,
-                color: Colors.white70,
-              ),
-            ),
+            MovieInfo(movie: movie),
             const SizedBox(height: 24.0),
+            SeasonInfo(movie: movie),
+            const SizedBox(height: 10,),
+            ContentPlayer(movie: movie)
           ],
         ),
       ),
