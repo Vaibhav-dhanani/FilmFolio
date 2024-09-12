@@ -1,5 +1,9 @@
-import 'package:filmfolio/src/services/auth_service.dart';
+import 'package:filmfolio/controllers/user_controller.dart';
+import 'package:filmfolio/services/auth_service.dart';
+import 'package:filmfolio/ui/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../../models/user.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -9,6 +13,26 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  User? user;
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserController userController = UserController();
+    User? loadedUser = await userController.loadUserFromLocalStorage();
+    if (loadedUser != null) {
+      setState(() {
+        user = loadedUser;
+        username = loadedUser.name;
+      });
+    }
+  }
+
   void _logOut(BuildContext context) async {
     try {
       final AuthService auth = AuthService();
@@ -34,11 +58,14 @@ class _AccountScreenState extends State<AccountScreen> {
               decoration: BoxDecoration(
                 color: Colors.amber,
               ),
-              child: Text(
-                'Settings',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 10, 10, 0),
+                child: Text(
+                  'Settings',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                  ),
                 ),
               ),
             ),
@@ -46,7 +73,11 @@ class _AccountScreenState extends State<AccountScreen> {
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
               onTap: () {
-                // Navigate to Profile
+                Navigator.push(
+                    (context),
+                    MaterialPageRoute(
+                      builder: (context) => UserProfileScreen(),
+                    ));
               },
             ),
             ListTile(
@@ -79,23 +110,26 @@ class _AccountScreenState extends State<AccountScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.perm_identity_rounded,
-                      color: Colors.amber,
-                      size: 30.0,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      "User Name",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20.0, 0, 0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.perm_identity_rounded,
+                        color: Colors.amber,
+                        size: 30.0,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 10),
+                      Text(
+                        username,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Builder(
                   builder: (context) {

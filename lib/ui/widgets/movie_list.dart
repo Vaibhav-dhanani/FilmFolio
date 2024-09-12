@@ -1,6 +1,6 @@
-import 'package:filmfolio/src/models/movie.dart';
+import 'package:filmfolio/models/movie.dart';
 import 'package:flutter/material.dart';
-import 'package:filmfolio/src/ui/screens/movie_detail_screen.dart';
+import 'package:filmfolio/ui/screens/movie_detail_screen.dart';
 
 class MovieList extends StatelessWidget {
   final List<Movie> movies;
@@ -28,17 +28,17 @@ class MovieList extends StatelessWidget {
             },
             child: Row(
               children: [
-                movie.images.isNotEmpty
-                    ? Image.asset(
-                        movie.images[0],
+                movie.thumbnailUrl != null
+                    ? Image.network(
+                        movie.thumbnailUrl,
                         fit: BoxFit.cover,
-                        width: 120.0,
-                        height: 180.0,
+                        width: 140.0,
+                        height: 160.0,
                       )
                     : Container(
                         color: Colors.grey[800],
-                        width: 120.0,
-                        height: 180.0,
+                        width: 140.0,
+                        height: 160.0,
                         child: const Center(
                           child: Text(
                             'No Image',
@@ -56,19 +56,17 @@ class MovieList extends StatelessWidget {
                       Text(
                         movie.name,
                         style: const TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
                       Text(
-                        'Rating: ${movie.rating.toStringAsFixed(1)}/10',
-                        style: const TextStyle(color: Colors.amber),
+                        'Rating: ${movie.rating?.toStringAsFixed(1)}/10',
+                        style: const TextStyle(color: Colors.amber,fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8.0),
                       Text(
-                        movie.description,
+                        movie.storyline,
                         style: const TextStyle(
                           color: Colors.white70,
                         ),
