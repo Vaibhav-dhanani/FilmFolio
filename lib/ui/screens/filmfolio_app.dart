@@ -15,6 +15,7 @@ class FilmfolioApp extends StatefulWidget {
 class _FilmfolioAppState extends State<FilmfolioApp> {
   final LocalAuthentication _auth = LocalAuthentication();
   bool _isAuthenticated = false;
+  bool _isLoading = true;
   int _currentIndex = 0;
 
   @override
@@ -25,6 +26,9 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
 
   Future<void> _initializeAuth() async {
     await _authenticateUser();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _authenticateUser() async {
@@ -37,11 +41,8 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
           localizedReason: 'Please authenticate to access the app',
           options: const AuthenticationOptions(biometricOnly: true),
         );
-      }
-      else {
-        setState(() {
-          _isAuthenticated = true;
-        });
+      } else {
+        didAuthenticate = true;
       }
 
       setState(() {
@@ -67,6 +68,14 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (!_isAuthenticated) {
       return Scaffold(
         body: Center(
@@ -76,7 +85,7 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
             actions: [
               TextButton(
                 onPressed: () {
-                  _authenticateUser(); // Retry authentication
+                  _authenticateUser();
                 },
                 child: const Text('Retry'),
               ),

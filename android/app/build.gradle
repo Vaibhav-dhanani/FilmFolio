@@ -1,13 +1,13 @@
-buildscript {
+/*buildscript {
     repositories {
         google()
         mavenCentral()
     }
-    dependencies {
+    *//*dependencies {
         classpath 'com.android.tools.build:gradle:8.0.2'
         classpath 'com.google.gms:google-services:4.4.2'
-    }
-}
+    }*//*
+}*/
 
 plugins {
     id "com.android.application"
@@ -56,7 +56,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
 }
@@ -68,5 +68,6 @@ flutter {
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
 }
+/*
 
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'*/

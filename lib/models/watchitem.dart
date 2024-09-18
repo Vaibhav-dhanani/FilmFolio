@@ -6,10 +6,10 @@ class WatchlistItem {
   WatchlistItem({
     required this.id,
     required this.contentId,
-    required this.dateAdded,
-  });
+  }): dateAdded = DateTime.timestamp();
 
   Map<String, dynamic> toJson() => {
+    'id': id,
     'contentId': contentId,
     'dateAdded': dateAdded.toLocal(),
   };

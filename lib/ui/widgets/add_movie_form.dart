@@ -42,7 +42,19 @@ class _AddMoviePageState extends State<AddMoviePage> {
   List<String> _photos = [];
   String? _trailerUrl;
 
-  final List<String> _allCategories = ["Action", "Comedy", "Drama", "Thriller", "Horror"];
+  final List<String> _allCategories = [
+    "Anime",
+    "Horror",
+    "Romantic",
+    "Science-fiction",
+    "Action",
+    "Comedy",
+    "Documentary",
+    "Drama",
+    "Fantasy",
+    "Mystery",
+    "Thriller",
+  ];
   List<Award>? _allAwards;
   List<Crew> _selectedCrewList = [];
   List<Crew> crewList = [];
