@@ -35,7 +35,7 @@ class _AddMoviePageState extends State<AddMoviePage> {
   final _durationController = TextEditingController();
 
   DateTime? _releaseDate;
-  bool _isMovie = true;
+  bool _isMovie = false;
   List<String> _selectedCrew = [];
   List<String> _selectedCategories = [];
   List<Award> _selectedAwards = [];
