@@ -7,7 +7,7 @@ class ContentController {
   final CollectionReference _movieCollection =
   FirebaseFirestore.instance.collection("contents");
 
-  Future<Movie> addMovie() async {
+  Future<Movie> addMovie(Movie movie) async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -71,7 +71,7 @@ class ContentController {
     };
 
     try {
-      final customMovie = Movie.fromJson(movieJson);
+      final customMovie = movie;
       await _movieCollection.doc(customMovie.id).set(customMovie.toJson());
       movies.add(customMovie);
       return customMovie;

@@ -6,13 +6,13 @@ import 'package:path/path.dart' as path;
 
 class PhotoSection extends StatefulWidget {
   final List<String> photos;
-  final String moviename;
+  final String showname;
   final Function(List<String>) onPhotosChanged;
 
   const PhotoSection({
     Key? key,
     required this.photos,
-    required this.moviename,
+    required this.showname,
     required this.onPhotosChanged,
   }) : super(key: key);
 
@@ -30,9 +30,16 @@ class _PhotoSectionState extends State<PhotoSection> {
     _photoUrls = widget.photos;
   }
 
-  Future<void> _pickAndUploadImages() async {
+  Future<void> _pickAndUploadImages(ImageSource source) async {
     final ImagePicker _picker = ImagePicker();
-    final List<XFile>? selectedImages = await _picker.pickMultiImage();
+    final List<XFile>? selectedImages;
+
+    if (source == ImageSource.gallery) {
+      selectedImages = await _picker.pickMultiImage();
+    } else {
+      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+      selectedImages = image != null ? [image] : null;
+    }
 
     if (selectedImages != null && selectedImages.isNotEmpty) {
       setState(() {
@@ -59,8 +66,12 @@ class _PhotoSectionState extends State<PhotoSection> {
 
   Future<String?> _uploadImage(File imageFile) async {
     try {
+      String cleanShowName = widget.showname.trim().replaceAll(' ', '_');
       String fileName = path.basename(imageFile.path);
-      Reference ref = FirebaseStorage.instance.ref().child('filmfolio/$widget.moviename/$fileName');
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('filmfolio/$cleanShowName/$fileName');
+
       UploadTask uploadTask = ref.putFile(imageFile);
       TaskSnapshot taskSnapshot = await uploadTask;
       return await taskSnapshot.ref.getDownloadURL();
@@ -81,13 +92,43 @@ class _PhotoSectionState extends State<PhotoSection> {
     widget.onPhotosChanged(_photoUrls);
   }
 
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickAndUploadImages(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickAndUploadImages(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ElevatedButton(
-          onPressed: _isUploading ? null : _pickAndUploadImages,
+          onPressed: _isUploading ? null : _showImageSourceDialog,
           child: _isUploading
               ? const CircularProgressIndicator()
               : const Text('Add Photos'),

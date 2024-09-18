@@ -1,7 +1,8 @@
-import 'package:filmfolio/ui/screens/watchlist_screen.dart';
 import 'package:flutter/material.dart';
-import 'category_screen.dart';
+import 'package:local_auth/local_auth.dart';
 import 'home_screen.dart';
+import 'category_screen.dart';
+import 'watchlist_screen.dart';
 import 'user_account_screen.dart';
 
 class FilmfolioApp extends StatefulWidget {
@@ -12,7 +13,44 @@ class FilmfolioApp extends StatefulWidget {
 }
 
 class _FilmfolioAppState extends State<FilmfolioApp> {
+  final LocalAuthentication _auth = LocalAuthentication();
+  bool _isAuthenticated = false;
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAuth();
+  }
+
+  Future<void> _initializeAuth() async {
+    await _authenticateUser();
+  }
+
+  Future<void> _authenticateUser() async {
+    try {
+      bool isBiometricAvailable = await _auth.canCheckBiometrics;
+      bool didAuthenticate = false;
+
+      if (isBiometricAvailable) {
+        didAuthenticate = await _auth.authenticate(
+          localizedReason: 'Please authenticate to access the app',
+          options: const AuthenticationOptions(biometricOnly: true),
+        );
+      }
+      else {
+        setState(() {
+          _isAuthenticated = true;
+        });
+      }
+
+      setState(() {
+        _isAuthenticated = didAuthenticate;
+      });
+    } catch (e) {
+      print("Authentication error: $e");
+    }
+  }
 
   void _navigateBottomBar(int index) {
     setState(() {
@@ -21,14 +59,33 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
   }
 
   final List<Widget> _pages = [
-    HomeScreen(),
-    WatchlistScreen(),
-    CategoryScreen(),
-    AccountScreen()
+    const HomeScreen(),
+    const WatchlistScreen(),
+    const CategoryScreen(),
+    const AccountScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    if (!_isAuthenticated) {
+      return Scaffold(
+        body: Center(
+          child: AlertDialog(
+            title: const Text('Authentication Required'),
+            content: const Text('Please authenticate to proceed.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _authenticateUser(); // Retry authentication
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -42,7 +99,7 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.watch_later),
-            label: "WatchList",
+            label: "Watchlist",
             backgroundColor: Colors.black,
           ),
           BottomNavigationBarItem(
@@ -60,11 +117,10 @@ class _FilmfolioAppState extends State<FilmfolioApp> {
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.grey[600],
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(color: Colors.amber),
+        unselectedLabelStyle: const TextStyle(color: Colors.grey),
         showUnselectedLabels: true,
         backgroundColor: Colors.black,
       ),
     );
   }
 }
-

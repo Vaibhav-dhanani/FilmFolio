@@ -15,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ContentController _contentController = ContentController();
   final List<Movie> _movies = [];
-
   final _searchController = TextEditingController();
   bool _isSearching = false;
 
@@ -27,84 +26,90 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _fetchMovies() async {
     List<Movie> movies = await _contentController.getAllMovies();
-    // await _contentController.addMovie();
     setState(() {
+      _movies.clear();
       _movies.addAll(movies);
     });
   }
 
-  void _addMovie(Movie movie) {
-    setState(() {
-      _movies.add(movie);
-    });
+  void _addMovie(Movie movie) async {
+    await _contentController.addMovie(movie);
+    _fetchMovies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _isSearching
-            ? TextField(
-          controller: _searchController,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'Search...',
-            hintStyle: TextStyle(color: Colors.white70),
-            border: InputBorder.none,
-          ),
-          onChanged: (value) {
-            setState(() {});
-          },
-        )
-            : const Text(
-          'FILMFOLIO',
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-            color: Colors.amber,
-          ),
-        ),
-        backgroundColor: Colors.black,
-        elevation: 0.0,
-        actions: [
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                if (_isSearching) {
-                  _searchController.clear();
-                }
-                _isSearching = !_isSearching;
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              // Menu action
-            },
-          ),
-        ],
-      ),
-      body: MovieList(
-        movies: _movies.where((movie) {
-          final query = _searchController.text.toLowerCase();
-          return movie.name.toLowerCase().contains(query) ||
-              movie.director.toLowerCase().contains(query);
-        }).toList(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AddMoviePage(
-                onMovieAdded: _addMovie,
-              ),
+    return GestureDetector(
+      onPanEnd: (details) {
+        if (details.velocity.pixelsPerSecond.dy > 200) {
+          _fetchMovies();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: _isSearching
+              ? TextField(
+            controller: _searchController,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              hintText: 'Search...',
+              hintStyle: TextStyle(color: Colors.white70),
+              border: InputBorder.none,
             ),
-          );
-        },
-        child: const Icon(Icons.add),
+            onChanged: (value) {
+              setState(() {});
+            },
+          )
+              : const Text(
+            'FILMFOLIO',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+              color: Colors.amber,
+            ),
+          ),
+          backgroundColor: Colors.black,
+          elevation: 0.0,
+          actions: [
+            IconButton(
+              icon: Icon(_isSearching ? Icons.close : Icons.search),
+              onPressed: () {
+                setState(() {
+                  if (_isSearching) {
+                    _searchController.clear();
+                  }
+                  _isSearching = !_isSearching;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                // Menu action
+              },
+            ),
+          ],
+        ),
+        body: MovieList(
+          movies: _movies.where((movie) {
+            final query = _searchController.text.toLowerCase();
+            return movie.name.toLowerCase().contains(query) ||
+                movie.director.toLowerCase().contains(query);
+          }).toList(),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AddMoviePage(
+                  onMovieAdded: _addMovie,
+                ),
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

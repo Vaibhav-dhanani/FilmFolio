@@ -28,20 +28,19 @@ class _AddMoviePageState extends State<AddMoviePage> {
   final AwardController _awardController = AwardController();
   final _formKey = GlobalKey<FormState>();
 
-  // Form controllers
   final _nameController = TextEditingController();
   final _directorController = TextEditingController();
   final _storylineController = TextEditingController();
   final _languageController = TextEditingController();
   final _durationController = TextEditingController();
 
-  // Form data
   DateTime? _releaseDate;
   bool _isMovie = true;
   List<String> _selectedCrew = [];
   List<String> _selectedCategories = [];
   List<Award> _selectedAwards = [];
   List<String> _photos = [];
+  String? _trailerUrl;
 
   final List<String> _allCategories = ["Action", "Comedy", "Drama", "Thriller", "Horror"];
   List<Award>? _allAwards;
@@ -63,8 +62,6 @@ class _AddMoviePageState extends State<AddMoviePage> {
       _allAwards = awardList;
     });
   }
-
-  void handlevideo(){}
 
   @override
   Widget build(BuildContext context) {
@@ -89,12 +86,14 @@ class _AddMoviePageState extends State<AddMoviePage> {
                 isMovie: _isMovie,
                 onIsMovieChanged: (value) => setState(() => _isMovie = value),
               ),
+              SizedBox(width: 12,),
               PhotoSection(
                 photos: _photos,
-                moviename: _nameController.text,
+                showname: _nameController.text,
                 onPhotosChanged: (newPhotos) =>
                     setState(() => _photos = newPhotos),
               ),
+              SizedBox(width: 12,),
               CategorySection(
                 allCategories: _allCategories,
                 selectedCategories: _selectedCategories,
@@ -108,15 +107,19 @@ class _AddMoviePageState extends State<AddMoviePage> {
                   });
                 },
               ),
+              SizedBox(width: 12,),
               StorylineAndLanguageFields(
                 storylineController: _storylineController,
                 languageController: _languageController,
               ),
+              SizedBox(width: 12,),
               ReleaseDatePicker(
                 releaseDate: _releaseDate,
                 onDateSelected: (date) => setState(() => _releaseDate = date),
               ),
+              SizedBox(width: 12,),
               DurationField(controller: _durationController),
+              SizedBox(width: 12,),
               CrewSection(
                 selectedCrew: _selectedCrew,
                 crewList: crewList,
@@ -135,6 +138,7 @@ class _AddMoviePageState extends State<AddMoviePage> {
                   });
                 },
               ),
+              SizedBox(width: 12,),
               AwardsSection(
                 allAwards: _allAwards!,
                 selectedAwards: _selectedAwards,
@@ -148,7 +152,8 @@ class _AddMoviePageState extends State<AddMoviePage> {
                   });
                 },
               ),
-              VideoInput(),
+              SizedBox(width: 12,),
+              VideoInput(showname: _nameController.text,onVideoUploaded: (url) => _trailerUrl = url),
               Center(
                 child: ElevatedButton(
                   onPressed: _submitForm,
@@ -173,7 +178,7 @@ class _AddMoviePageState extends State<AddMoviePage> {
         popularity: 0,
         isMovie: _isMovie,
         thumbnailUrl: _photos.isNotEmpty ? _photos[0] : '',
-        trailer: '',
+        trailer: _trailerUrl ?? '',
         photos: _photos,
         categories: _selectedCategories,
         storyline: _storylineController.text,

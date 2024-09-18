@@ -9,7 +9,17 @@ class DurationField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: const InputDecoration(labelText: 'Duration (minutes)'),
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: 'Duration (minutes)',
+        labelStyle: const TextStyle(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.amber),
+        ),
+      ),
       keyboardType: TextInputType.number,
       validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
     );
