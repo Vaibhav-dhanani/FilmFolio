@@ -1,5 +1,6 @@
 import 'package:filmfolio/services/auth_service.dart';
 import 'package:filmfolio/ui/screens/register_screen.dart';
+import 'package:filmfolio/ui/widgets/error_show.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,14 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await auth.signInWithEmailPassword(
           _emailController.text, _passwordController.text);
     } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: ((context) => AlertDialog(
-          title: Text(e.toString()),
-          backgroundColor: Colors.black87,
-          titleTextStyle: TextStyle(color: Colors.amber),
-        )),
-      );
+      showErrorDialog(context,e.toString());
     }
   }
 

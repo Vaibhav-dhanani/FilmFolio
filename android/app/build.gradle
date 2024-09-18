@@ -1,12 +1,13 @@
-buildscript {
+/*buildscript {
     repositories {
         google()
         mavenCentral()
     }
-    dependencies {
+    *//*dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath 'com.google.gms:google-services:4.4.2'
-    }
-}
+    }*//*
+}*/
 
 plugins {
     id "com.android.application"
@@ -33,32 +34,40 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.filmfolio"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace "com.example.filmfolio"
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        applicationId = "com.example.filmfolio"
+        applicationId "com.example.filmfolio"
         minSdkVersion 23
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig = signingConfigs.debug
         }
     }
 }
 
 flutter {
-    source = "../.."
+    source '../..'
 }
 
-apply plugin: 'com.google.gms.google-services'
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
+/*
+
+apply plugin: 'com.google.gms.google-services'*/

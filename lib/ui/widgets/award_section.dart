@@ -18,12 +18,26 @@ class AwardsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Awards (Optional):'),
+        const Text(
+          'Awards (Optional):',
+          style: TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 8.0),
         Wrap(
           spacing: 8,
           children: allAwards.map((award) => FilterChip(
-            label: Text('${award.category}: ${award.name}'),
+            label: Text(
+              '${award.category}: ${award.name}',
+              style: TextStyle(
+                color: selectedAwards.contains(award)
+                    ? Colors.black
+                    : Colors.white,
+              ),
+            ),
             selected: selectedAwards.contains(award),
+            selectedColor: Colors.amber,
+            backgroundColor: Colors.black,
+            checkmarkColor: Colors.black,
             onSelected: (selected) => onAwardSelected(award, selected),
           )).toList(),
         ),
