@@ -1,9 +1,10 @@
+import 'package:filmfolio/controllers/content_controller.dart';
 import 'package:filmfolio/controllers/user_controller.dart';
 import 'package:filmfolio/services/auth_service.dart';
 import 'package:filmfolio/ui/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../models/user.dart';
+import '../../models/movie.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -15,6 +16,7 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   User? user;
   String username = '';
+  List<Movie> reviewedMovies = [];
 
   @override
   void initState() {
@@ -30,8 +32,22 @@ class _AccountScreenState extends State<AccountScreen> {
         user = loadedUser;
         username = loadedUser.name;
       });
+      _loadReviewedMovies(loadedUser.id);
     }
   }
+
+  Future<void> _loadReviewedMovies(String userId) async {
+    ContentController _contentController = ContentController();
+    List<Movie> allMovies = await _contentController.getAllMovies();
+    List<Movie> moviesWithUserReviews = allMovies.where((movie) {
+      return movie.reviews?.any((review) => review.username == username) ?? false;
+    }).toList();
+
+    setState(() {
+      reviewedMovies = moviesWithUserReviews;
+    });
+  }
+
 
   void _logOut(BuildContext context) async {
     try {
@@ -41,8 +57,8 @@ class _AccountScreenState extends State<AccountScreen> {
       showDialog(
         context: context,
         builder: ((context) => AlertDialog(
-              title: Text(e.toString()),
-            )),
+          title: Text(e.toString()),
+        )),
       );
     }
   }
@@ -74,10 +90,11 @@ class _AccountScreenState extends State<AccountScreen> {
               title: Text('Profile'),
               onTap: () {
                 Navigator.push(
-                    (context),
-                    MaterialPageRoute(
-                      builder: (context) => UserProfileScreen(),
-                    ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserFullProfile(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -153,7 +170,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   Container(
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      "User's Rating List",
+                      "User's Reviewed Movies",
                       style: TextStyle(
                         color: Colors.amber,
                         fontSize: 18,
@@ -161,40 +178,34 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                   ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        "user rates",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
-                      ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: reviewedMovies.length,
+                      itemBuilder: (context, index) {
+                        Movie movie = reviewedMovies[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              movie.name,
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: movie.reviews?.map((review) {
+                                return Text(
+                                  '${review.username}: ${review.reviewText}',
+                                  style: TextStyle(color: Colors.black),
+                                );
+                              }).toList() ?? [],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const Divider(color: Colors.grey),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Text(
-                      "User's Favorite People",
-                      style: TextStyle(
-                        color: Colors.amber,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        "use fav people",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),

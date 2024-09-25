@@ -45,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (userCredential.user != null) {
         final UserController userController = UserController();
         await userController.createUser(userCredential.user!.uid, name, email);
-        await userController.saveUserToLocalStorage(userCredential.user!.uid, name, email);
+        await userController.saveUserToLocalStorage(userCredential.user!.uid, name, email,"");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => FilmfolioApp()),

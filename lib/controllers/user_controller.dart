@@ -15,31 +15,46 @@ class UserController {
       id: id,
       name: name,
       email: email,
+      profileUrl:"",
     );
     await _usersCollection.doc(_currentUser!.id).set(_currentUser!.toJson());
-    await saveUserToLocalStorage(id, name, email);
+    await saveUserToLocalStorage(id, name, email,"");
     return _currentUser!;
   }
 
-  Future<void> getUser(String userId) async {
-    DocumentSnapshot doc = await _usersCollection.doc(userId).get();
-    if (doc.exists) {
+  Future<User?> getUser(String email) async {
+    QuerySnapshot querySnapshot = await _usersCollection
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot doc = querySnapshot.docs.first;
       _currentUser = User.fromJson(doc.data() as Map<String, dynamic>);
-      await saveUserToLocalStorage(_currentUser!.id!, _currentUser!.name, _currentUser!.email);
+      await saveUserToLocalStorage(
+        _currentUser!.id!,
+        _currentUser!.name,
+        _currentUser!.email,
+        _currentUser!.profileUrl,
+      );
+      return _currentUser;
     } else {
       _currentUser = null;
     }
+    return null;
   }
 
-  Future<void> updateUser(String name, String email) async {
+
+  Future<void> updateUser(String name, String email, String profileUrl) async {
     if (_currentUser != null) {
       _currentUser = User(
         id: _currentUser!.id,
         name: name,
         email: email,
+        profileUrl: profileUrl,
       );
       await _usersCollection.doc(_currentUser!.id).update(_currentUser!.toJson());
-      await saveUserToLocalStorage(_currentUser!.id!, name, email);
+      await saveUserToLocalStorage(_currentUser!.id!, name, email,profileUrl);
     }
   }
 
@@ -58,11 +73,13 @@ class UserController {
         .toList();
   }
 
-  Future<void> saveUserToLocalStorage(String id, String name, String email) async {
+  Future<void> saveUserToLocalStorage(String id, String name, String email,String profileUrl) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_id', id);
     await prefs.setString('user_name', name);
     await prefs.setString('user_email', email);
+    await prefs.setString('user_profile0', profileUrl);
+    _currentUser = User(id: id, name: name, email: email,profileUrl: profileUrl);
   }
 
   Future<User?> loadUserFromLocalStorage() async {
@@ -70,10 +87,11 @@ class UserController {
     String? id = prefs.getString('user_id');
     String? name = prefs.getString('user_name');
     String? email = prefs.getString('user_email');
+    String? profileUrl = prefs.getString('user_profile');
 
-    if (id != null && name != null && email != null) {
-      _currentUser = User(id: id, name: name, email: email);
-      await getUser(id);
+    if (id != null && name != null && email != null && profileUrl!= null) {
+      _currentUser = User(id: id, name: name, email: email,profileUrl: profileUrl);
+      await getUser(email);
     }
     return _currentUser;
   }

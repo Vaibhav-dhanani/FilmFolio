@@ -1,30 +1,40 @@
-import 'package:filmfolio/controllers/content_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:local_auth/local_auth.dart';
+import 'package:filmfolio/controllers/user_controller.dart';
+import 'package:filmfolio/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  Future<UserCredential> signInWithEmailPassword(String email,String password) async {
+  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
+  final UserController _userController = UserController();
+
+  Future<firebase_auth.UserCredential> signInWithEmailPassword(String email, String password) async {
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
-      // print(userCredential.additionalUserInfo);
+      User? user = await _userController.getUser(email);
+      if (user != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_id', user.id);
+        await prefs.setString('user_name', user.name);
+        await prefs.setString('user_email', user.email);
+        await prefs.setString('user_profile', user.profileUrl);
+      }
+
+      firebase_auth.UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return userCredential;
-    } on FirebaseAuthException catch (error) {
+    } on firebase_auth.FirebaseAuthException catch (error) {
       throw Exception(error.code);
     }
   }
 
-  Future<UserCredential> signUpWithEmailPassword (String email, String password) async {
+  Future<firebase_auth.UserCredential> signUpWithEmailPassword(String email, String password) async {
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(email: email, password: password);
+      firebase_auth.UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       return userCredential;
-    }on FirebaseException catch (e) {
-        throw Exception(e.code);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw Exception(e.code);
     }
   }
 
   Future<void> signOut() async {
-    return await auth.signOut();
+    await _auth.signOut();
   }
-
 }

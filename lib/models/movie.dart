@@ -8,7 +8,7 @@ class Movie {
   final String name;
   final String director;
   final double? rating;
-  final List<Review>? reviews;
+  List<Review>? reviews;
   final int? popularity;
   final bool isMovie;
   final String thumbnailUrl;
@@ -46,7 +46,14 @@ class Movie {
     this.numberOfSeasons,
     this.numberOfEpisodes,
     this.seasons,
-  }) : rating = rating ?? 0.0, popularity = popularity ??  0 , reviews = [];
+  })  : rating = rating ?? 0.0,
+        popularity = popularity ?? 0,
+        reviews = reviews ?? [];
+
+  void addReview(Review review) {
+    reviews ??= [];
+    reviews!.add(review);
+  }
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(

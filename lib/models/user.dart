@@ -1,15 +1,15 @@
-import 'package:filmfolio/models/watchitem.dart';
-
 class User {
-  final String? id;
+  final String id;
   final String name;
   final String email;
   List<String> watchlist;
+  String profileUrl;
 
   User({
     required this.id,
     required this.name,
     required this.email,
+    required this.profileUrl,
   }) : watchlist = [];
 
   Map<String, dynamic> toJson() => {
@@ -17,6 +17,7 @@ class User {
     'name': name,
     'email': email,
     'watchlist': watchlist,
+    'profileUrl': profileUrl,
   };
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class User {
       id: json['id'],
       name: json['name'],
       email: json['email'],
+      profileUrl: json['profileUrl'],
     )..watchlist = List<String>.from(json['watchlist'] ?? []);
   }
 }

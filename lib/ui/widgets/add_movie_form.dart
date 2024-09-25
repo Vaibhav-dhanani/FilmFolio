@@ -186,7 +186,6 @@ class _AddMoviePageState extends State<AddMoviePage> {
         name: _nameController.text,
         director: _directorController.text,
         rating: 0.0,
-        reviews: [],
         popularity: 0,
         isMovie: _isMovie,
         thumbnailUrl: _photos.isNotEmpty ? _photos[0] : '',
