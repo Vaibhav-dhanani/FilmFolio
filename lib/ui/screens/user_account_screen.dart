@@ -3,8 +3,9 @@ import 'package:filmfolio/controllers/user_controller.dart';
 import 'package:filmfolio/services/auth_service.dart';
 import 'package:filmfolio/ui/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
-import '../../models/user.dart';
+
 import '../../models/movie.dart';
+import '../../models/user.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -40,14 +41,14 @@ class _AccountScreenState extends State<AccountScreen> {
     ContentController _contentController = ContentController();
     List<Movie> allMovies = await _contentController.getAllMovies();
     List<Movie> moviesWithUserReviews = allMovies.where((movie) {
-      return movie.reviews?.any((review) => review.username == username) ?? false;
+      return movie.reviews?.any((review) => review.username == username) ??
+          false;
     }).toList();
 
     setState(() {
       reviewedMovies = moviesWithUserReviews;
     });
   }
-
 
   void _logOut(BuildContext context) async {
     try {
@@ -57,8 +58,8 @@ class _AccountScreenState extends State<AccountScreen> {
       showDialog(
         context: context,
         builder: ((context) => AlertDialog(
-          title: Text(e.toString()),
-        )),
+              title: Text(e.toString()),
+            )),
       );
     }
   }
@@ -102,13 +103,6 @@ class _AccountScreenState extends State<AccountScreen> {
               title: Text('Notifications'),
               onTap: () {
                 // Navigate to Notifications
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock),
-              title: Text('Privacy'),
-              onTap: () {
-                // Navigate to Privacy
               },
             ),
             ListTile(
@@ -170,7 +164,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   Container(
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      "User's Reviewed Movies",
+                      "Reviewed Movies",
                       style: TextStyle(
                         color: Colors.amber,
                         fontSize: 18,
@@ -194,11 +188,12 @@ class _AccountScreenState extends State<AccountScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: movie.reviews?.map((review) {
-                                return Text(
-                                  '${review.username}: ${review.reviewText}',
-                                  style: TextStyle(color: Colors.black),
-                                );
-                              }).toList() ?? [],
+                                    return Text(
+                                      '${review.username}: ${review.reviewText}',
+                                      style: TextStyle(color: Colors.black),
+                                    );
+                                  }).toList() ??
+                                  [],
                             ),
                           ),
                         );

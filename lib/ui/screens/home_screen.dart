@@ -83,12 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                // Menu action
-              },
-            ),
           ],
         ),
         body: MovieList(

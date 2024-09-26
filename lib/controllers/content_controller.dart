@@ -30,8 +30,25 @@ class ContentController {
   }
 
   Future<Movie?> getMovieById(String id) async {
-    DocumentSnapshot doc = await _movieCollection.doc(id).get();
-    return doc.exists ? Movie.fromJson(doc.data() as Map<String, dynamic>) : null;
+    try {
+      DocumentSnapshot doc = await _movieCollection.doc(id).get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null && data is Map<String, dynamic>) {
+          return Movie.fromJson(data);
+        } else {
+          print("Document data was null or not a Map");
+          return null;
+        }
+      } else {
+        print("No document found with id: $id");
+        return null;
+      }
+    } catch (e) {
+      print("Error retrieving movie: $e");
+      return null;
+    }
   }
 
   Future<void> updateMovie(String id, Map<String, dynamic> updatedMovieJson) async {
