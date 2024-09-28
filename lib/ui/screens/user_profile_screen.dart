@@ -56,12 +56,15 @@ class _UserFullProfileState extends State<UserFullProfile> {
       });
       try {
         String fileName = path.basename(pickedFile.path);
-        Reference ref = FirebaseStorage.instance.ref().child('filmfolio/$userName/$fileName');
+        Reference ref = FirebaseStorage.instance
+            .ref()
+            .child('filmfolio/$userName/$fileName');
         UploadTask uploadTask = ref.putFile(_profileImage!);
         TaskSnapshot taskSnapshot = await uploadTask;
         String url = await taskSnapshot.ref.getDownloadURL();
         _userController.updateUser(userName, userEmail, url);
-        _userController.saveUserToLocalStorage(user!.id, user!.name, user!.email, url);
+        _userController.saveUserToLocalStorage(
+            user!.id, user!.name, user!.email, url);
       } catch (e) {
         print('Error uploading image: $e');
       }
@@ -74,10 +77,13 @@ class _UserFullProfileState extends State<UserFullProfile> {
       appBar: AppBar(
         title: Text("User Profile"),
         backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white), // Set back arrow color
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildProfileHeader(),
             const SizedBox(height: 20),
@@ -91,9 +97,12 @@ class _UserFullProfileState extends State<UserFullProfile> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
-              child: Text(_isResetPasswordVisible ? 'Hide Reset' : 'Password Reset'),
+              child: Text(_isResetPasswordVisible
+                  ? 'Hide Reset Password'
+                  : 'Reset Password'),
             ),
             const SizedBox(height: 20),
             if (_isResetPasswordVisible) _buildResetPasswordForm(),
@@ -103,104 +112,145 @@ class _UserFullProfileState extends State<UserFullProfile> {
     );
   }
 
-
   Widget _buildProfileHeader() {
     return Column(
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: profileImageUrl != null
+          backgroundImage: profileImageUrl.isNotEmpty
               ? NetworkImage(profileImageUrl)
               : AssetImage("assets/images/user.png") as ImageProvider,
         ),
         const SizedBox(height: 16),
-        ElevatedButton(
+        ElevatedButton.icon(
           onPressed: _pickImage,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.amber,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          child: Text('Change Profile Picture'),
+          icon: Icon(Icons.camera_alt),
+          label: Text('Change Profile Picture'),
         ),
       ],
     );
   }
 
   Widget _buildProfileInfo() {
-    return Column(
-      children: [
-        ListTile(
-          leading: Icon(Icons.person, color: Colors.amber),
-          title: Text('Name', style: TextStyle(color: Colors.white)),
-          subtitle: Text(userName, style: TextStyle(color: Colors.white)),
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.amber),
+              title: Text(
+                'Name',
+                style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                userName,
+                style: TextStyle(color: Colors.white70, fontSize: 18),
+              ),
+            ),
+            Divider(color: Colors.amber),
+            ListTile(
+              leading: Icon(Icons.email, color: Colors.amber),
+              title: Text(
+                'Email',
+                style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                userEmail,
+                style: TextStyle(color: Colors.white70, fontSize: 18),
+              ),
+            ),
+          ],
         ),
-        ListTile(
-          leading: Icon(Icons.email, color: Colors.amber),
-          title: Text('Email', style: TextStyle(color: Colors.white)),
-          subtitle: Text(userEmail, style: TextStyle(color: Colors.white)),
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildResetPasswordForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _oldPasswordController,
-            obscureText: true,
-            decoration: InputDecoration(
-              hintStyle: TextStyle(color: Colors.white),
-              labelText: 'Old Password',
-              border: OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.amber),
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _oldPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Old Password',
+                  labelStyle: TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your old password';
+                  }
+                  return null;
+                },
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.amber),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  labelStyle: TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+                  return null;
+                },
               ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your old password';
-              }
-              return null;
-            },
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _submitPasswordReset,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 12),
+                ),
+                child: const Text('Reset Password'),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _newPasswordController,
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'New Password',
-              border: OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.amber),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.amber),
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty || value.length < 6) {
-                return 'Password must be at least 6 characters long';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _submitPasswordReset,
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.amber,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            child: const Text('Reset Password'),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -208,8 +258,10 @@ class _UserFullProfileState extends State<UserFullProfile> {
   void _submitPasswordReset() async {
     if (_formKey.currentState!.validate()) {
       try {
-        firebase_auth.User? currentUser = firebase_auth.FirebaseAuth.instance.currentUser;
-        firebase_auth.AuthCredential credential = firebase_auth.EmailAuthProvider.credential(
+        firebase_auth.User? currentUser =
+            firebase_auth.FirebaseAuth.instance.currentUser;
+        firebase_auth.AuthCredential credential =
+        firebase_auth.EmailAuthProvider.credential(
           email: currentUser!.email!,
           password: _oldPasswordController.text,
         );

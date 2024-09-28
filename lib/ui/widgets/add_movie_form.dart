@@ -84,7 +84,8 @@ class _AddMoviePageState extends State<AddMoviePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Movie/Show')),
+      appBar: AppBar(title: const Text('Add New Movie/Show'),iconTheme: IconThemeData(color: Colors.white), // Set back arrow color
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
