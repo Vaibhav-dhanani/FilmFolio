@@ -143,8 +143,6 @@ class UserController {
       throw Exception('Current user has no valid ID');
     }
 
-    if (!_currentUser!.watchlist.contains(showId)) return;
-
     try {
       _currentUser!.watchlist.remove(showId);
       await _usersCollection.doc(userId).update({

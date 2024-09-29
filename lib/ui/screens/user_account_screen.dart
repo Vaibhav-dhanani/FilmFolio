@@ -3,7 +3,6 @@ import 'package:filmfolio/controllers/user_controller.dart';
 import 'package:filmfolio/services/auth_service.dart';
 import 'package:filmfolio/ui/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../models/movie.dart';
 import '../../models/user.dart';
 
