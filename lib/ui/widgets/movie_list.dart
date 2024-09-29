@@ -1,288 +1,149 @@
 import 'package:filmfolio/controllers/user_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:filmfolio/models/movie.dart';
+import 'package:filmfolio/models/user.dart';
 import 'package:filmfolio/ui/screens/movie_detail_screen.dart';
+import 'package:flutter/material.dart';
 
-class MovieList extends StatelessWidget {
+class MovieList extends StatefulWidget {
   final List<Movie> movies;
-  final UserController _userController = UserController();
 
-  MovieList({super.key, required this.movies});
+  const MovieList({Key? key, required this.movies}) : super(key: key);
+
+  @override
+  _MovieListState createState() => _MovieListState();
+}
+
+class _MovieListState extends State<MovieList> {
+  final UserController _userController = UserController();
+  Set<String> addedToWatchlist = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchUserWatchList();
+  }
+
+  void fetchUserWatchList() async {
+    List<String> userwatchlist = await _userController.getWatchlist();
+    addedToWatchlist.addAll(userwatchlist);
+  }
+
+  void _addToWatchlist(String movieId) async {
+    await _userController.addToWatchlist(movieId);
+    setState(() {
+      addedToWatchlist.add(movieId);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Movie added to watchlist'),
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            _userController.removeFromWatchlist(movieId);
+            setState(() {
+              addedToWatchlist.remove(movieId);
+            });
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: movies.length,
-      itemBuilder: (context, index) {
-        final movie = movies[index];
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.movies.length,
+        itemBuilder: (context, index) {
+          final movie = widget.movies[index];
 
-        return Card(
-          elevation: 8,
-          shadowColor: Colors.amberAccent.withOpacity(0.2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          color: Colors.grey[900],
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MovieDetailScreen(movie: movie),
-                ),
-              );
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
+          return Container(
+            width: 130,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MovieDetailScreen(movie: movie),
                   ),
-                  child: movie.thumbnailUrl != null
-                      ? Image.network(
-                    movie.thumbnailUrl,
-                    fit: BoxFit.cover,
-                    width: 100.0,
-                    height: 150.0,
-                  )
-                      : Container(
-                    color: Colors.grey[800],
-                    width: 100.0,
-                    height: 150.0,
-                    child: const Center(
-                      child: Icon(
-                        Icons.movie_creation_outlined,
-                        size: 40,
-                        color: Colors.white54,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Movie title
-                        Text(
-                          movie.name,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-
-                        // Movie rating
-                        Row(
-                          children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 18),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${movie.rating?.toStringAsFixed(1) ?? "N/A"}/10',
-                              style: const TextStyle(
-                                color: Colors.amber,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: movie.thumbnailUrl != null
+                        ? Image.network(
+                            movie.thumbnailUrl!,
+                            fit: BoxFit.cover,
+                            width: 130,
+                            height: 150,
+                          )
+                        : Container(
+                            color: Colors.grey[800],
+                            width: 130,
+                            height: 150,
+                            child: const Center(
+                              child: Icon(
+                                Icons.movie_creation_outlined,
+                                size: 40,
+                                color: Colors.white54,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-
-                        // Movie storyline
-                        Text(
-                          movie.storyline,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 14,
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Add to watchlist button (Popup)
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        _userController.addToWatchlist(movie.id);
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'watchlist',
-                          child: Text('Add to Watchlist'),
-                        ),
-                      ],
-                      icon: const Icon(
-                        Icons.more_vert,
-                        color: Colors.white70,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  const SizedBox(height: 4),
+                  Text(
+                    movie.name,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 90),
-                  ],
-                ),
-              ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${movie.rating?.toStringAsFixed(1) ?? "N/A"}',
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => _addToWatchlist(movie.id),
+                        child: Icon(
+                          addedToWatchlist.contains(movie.id)
+                              ? Icons.check
+                              : Icons.add,
+                          color: addedToWatchlist.contains(movie.id)
+                              ? Colors.green
+                              : Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'package:filmfolio/controllers/user_controller.dart';
-// import 'package:flutter/material.dart';
-// import 'package:filmfolio/models/movie.dart';
-// import 'package:filmfolio/ui/screens/movie_detail_screen.dart';
-//
-// class MovieList extends StatelessWidget {
-//   final List<Movie> movies;
-//   final UserController _userController = UserController();
-//
-//   MovieList({super.key, required this.movies});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       itemCount: movies.length,
-//       itemBuilder: (context, index) {
-//         final movie = movies[index];
-//
-//         return Card(
-//           elevation: 4,
-//           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-//           color: Colors.grey[900],
-//           margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-//           child: InkWell(
-//             borderRadius: BorderRadius.circular(12),
-//             onTap: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => MovieDetailScreen(movie: movie),
-//                 ),
-//               );
-//             },
-//             child: Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 ClipRRect(
-//                   borderRadius: const BorderRadius.only(
-//                     topLeft: Radius.circular(12),
-//                     bottomLeft: Radius.circular(12),
-//                   ),
-//                   child: movie.thumbnailUrl != null
-//                       ? Image.network(
-//                     movie.thumbnailUrl,
-//                     fit: BoxFit.cover,
-//                     width: 80.0,
-//                     height: 120.0,
-//                   )
-//                       : Container(
-//                     color: Colors.grey[800],
-//                     width: 120.0,
-//                     height: 180.0,
-//                     child: const Center(
-//                       child: Icon(
-//                         Icons.movie,
-//                         size: 40,
-//                         color: Colors.white54,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Expanded(
-//                   child: Padding(
-//                     padding: const EdgeInsets.all(12.0),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text(
-//                           movie.name,
-//                           style: const TextStyle(
-//                             fontSize: 18.0,
-//                             fontWeight: FontWeight.bold,
-//                             color: Colors.white,
-//                           ),
-//                         ),
-//                         const SizedBox(height: 4),
-//                         Row(
-//                           children: [
-//                             const Icon(Icons.star, color: Colors.amber, size: 16),
-//                             const SizedBox(width: 4),
-//                             Text(
-//                               '${movie.rating?.toStringAsFixed(1) ?? "N/A"}/10',
-//                               style: const TextStyle(
-//                                 color: Colors.amber,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                         const SizedBox(height: 8),
-//                         Text(
-//                           movie.storyline,
-//                           style: TextStyle(
-//                             color: Colors.white.withOpacity(0.7),
-//                             fontSize: 14,
-//                           ),
-//                           maxLines: 3,
-//                           overflow: TextOverflow.ellipsis,
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 PopupMenuButton<String>(
-//                   onSelected: (value) {
-//                     _userController.addToWatchlist(movie.id);
-//                   },
-//                   itemBuilder: (context) => [
-//                     const PopupMenuItem(
-//                       value: 'watchlist',
-//                       child: Text('Add to Watchlist'),
-//                     ),
-//                   ],
-//                   icon: const Icon(
-//                     Icons.more_vert,
-//                     color: Colors.white70,
-//                   ),
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(8),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

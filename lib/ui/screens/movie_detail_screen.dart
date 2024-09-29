@@ -3,6 +3,7 @@ import 'package:filmfolio/controllers/user_controller.dart';
 import 'package:filmfolio/models/movie.dart';
 import 'package:filmfolio/models/review.dart';
 import 'package:filmfolio/models/user.dart';
+import 'package:filmfolio/ui/screens/home_screen.dart';
 import 'package:filmfolio/ui/widgets/content_player.dart';
 import 'package:filmfolio/ui/widgets/movie_info.dart';
 import 'package:filmfolio/ui/widgets/movie_poster.dart';
@@ -194,6 +195,7 @@ class _ReviewFormState extends State<_ReviewForm> {
   final UserController _userController = UserController();
   final ContentController _contentController = ContentController();
   User? user;
+  double _rating = 5.0;
 
   @override
   void dispose() {
@@ -239,6 +241,31 @@ class _ReviewFormState extends State<_ReviewForm> {
               },
             ),
             const SizedBox(height: 16),
+            // Rating Slider
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Rating (out of 10)',
+                  style: TextStyle(color: Colors.white),
+                ),
+                Slider(
+                  value: _rating,
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  label: _rating.round().toString(),
+                  activeColor: Colors.amber,
+                  inactiveColor: Colors.white,
+                  onChanged: (value) {
+                    setState(() {
+                      _rating = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -262,11 +289,11 @@ class _ReviewFormState extends State<_ReviewForm> {
       reviewText: _reviewController.text,
       contentId: widget.movie.id,
     );
-    await _contentController.addReviewToShow(newReview);
+    await _contentController.addReviewToShow(newReview,_rating);
     setState(() {
       widget.movie.reviews!.add(newReview);
     });
-
     Navigator.pop(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
   }
 }

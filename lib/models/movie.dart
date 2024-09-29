@@ -7,7 +7,7 @@ class Movie {
   final String id;
   final String name;
   final String director;
-  final double? rating;
+  double? rating;
   List<Review>? reviews;
   final int? popularity;
   final bool isMovie;

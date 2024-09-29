@@ -68,7 +68,7 @@ class ContentController {
     return movies;
   }
 
-  Future<void> addReviewToShow(Review review) async {
+  Future<void> addReviewToShow(Review review, double rate) async {
     await getAllMovies();
     Movie? movie = movies.firstWhere(
           (m) => m.id == review.contentId,
@@ -81,6 +81,7 @@ class ContentController {
         movie.reviews!.removeAt(existingReviewIndex!);
       }
       print(review.username);
+      movie.rating = (movie.rating! + rate)/(movie.reviews!.length + 1);
       movie.addReview(review);
       await updateMovie(movie.id, movie.toJson());
 

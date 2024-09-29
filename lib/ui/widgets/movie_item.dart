@@ -14,12 +14,6 @@ class MovieItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /*Image.asset(
-            movie.images[0],
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 200.0,
-          ),*/
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -38,23 +32,12 @@ class MovieItem extends StatelessWidget {
                   'Director: ${movie.director}',
                   style: const TextStyle(color: Colors.white70),
                 ),
-                /*const SizedBox(height: 4.0),
-                Text(
-                  'Type: ${movie.type}',
-                  style: const TextStyle(color: Colors.white70),
-                ),*/
                 const SizedBox(height: 4.0),
                 Text(
                   'Rating: ${movie.rating}/10',
                   style: const TextStyle(color: Colors.amber),
                 ),
                 const SizedBox(height: 8.0),
-                /*Text(
-                  movie.description,
-                  style: const TextStyle(color: Colors.white70),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),*/
               ],
             ),
           ),

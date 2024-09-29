@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:filmfolio/controllers/content_controller.dart';
 import 'package:filmfolio/models/movie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/user.dart';
 
 class UserController {
-  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _usersCollection =
+      FirebaseFirestore.instance.collection('users');
   User? _currentUser;
 
   User? get currentUser => _currentUser;
@@ -24,10 +26,8 @@ class UserController {
   }
 
   Future<User?> getUser(String email) async {
-    final querySnapshot = await _usersCollection
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
+    final querySnapshot =
+        await _usersCollection.where('email', isEqualTo: email).limit(1).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       final doc = querySnapshot.docs.first;
@@ -52,7 +52,9 @@ class UserController {
         email: email,
         profileUrl: profileUrl,
       );
-      await _usersCollection.doc(_currentUser!.id).update(_currentUser!.toJson());
+      await _usersCollection
+          .doc(_currentUser!.id)
+          .update(_currentUser!.toJson());
       await saveUserToLocalStorage(_currentUser!.id!, name, email, profileUrl);
     }
   }
@@ -72,13 +74,15 @@ class UserController {
         .toList();
   }
 
-  Future<void> saveUserToLocalStorage(String id, String name, String email, String profileUrl) async {
+  Future<void> saveUserToLocalStorage(
+      String id, String name, String email, String profileUrl) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_id', id);
     await prefs.setString('user_name', name);
     await prefs.setString('user_email', email);
     await prefs.setString('user_profile', profileUrl);
-    _currentUser = User(id: id, name: name, email: email, profileUrl: profileUrl);
+    _currentUser =
+        User(id: id, name: name, email: email, profileUrl: profileUrl);
   }
 
   Future<User?> loadUserFromLocalStorage() async {
@@ -89,7 +93,8 @@ class UserController {
     final profileUrl = prefs.getString('user_profile');
 
     if (id != null && name != null && email != null && profileUrl != null) {
-      _currentUser = User(id: id, name: name, email: email, profileUrl: profileUrl);
+      _currentUser =
+          User(id: id, name: name, email: email, profileUrl: profileUrl);
       await getUser(email);
     }
     return _currentUser;
@@ -194,5 +199,29 @@ class UserController {
 
     print('Fetched movies: $movies');
     return movies;
+  }
+
+  Future<List<String>> getWatchlist() async {
+    final firebaseAuth.FirebaseAuth _auth = firebaseAuth.FirebaseAuth.instance;
+    List<String> watchlist = [];
+    try {
+      final firebaseUser = _auth.currentUser;
+      if (firebaseUser == null) {
+        throw Exception('No user is currently logged in');
+      }
+
+      final userDoc = await _usersCollection.doc(firebaseUser.uid).get();
+
+      if (!userDoc.exists) {
+        throw Exception('User document not found in Firestore');
+      }
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+      watchlist = List<String>.from(userData['watchlist'] ?? []);
+    } catch (e) {
+      print('Error fetching user shows: $e');
+      rethrow;
+    }
+    return watchlist;
   }
 }
