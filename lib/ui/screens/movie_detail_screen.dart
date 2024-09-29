@@ -10,6 +10,7 @@ import 'package:filmfolio/ui/widgets/movie_title.dart';
 import 'package:filmfolio/ui/widgets/secsons_info.dart';
 import 'package:flutter/material.dart';
 
+
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
 
