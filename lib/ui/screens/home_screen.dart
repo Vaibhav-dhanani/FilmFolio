@@ -46,8 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchUser() async {
     final user = await _userController.loadUserFromLocalStorage();
+    final finaluser = await _userController.getUserById(user!.id);
+    print(user.email);
+    print(finaluser!.isAdmin);
     setState(() {
-      _user = user;
+      _user = finaluser;
       _isLoadingUser = false;
     });
   }
@@ -130,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onPressed: _searchHelper.toggleSearch,
         ),
-        if (!_isLoadingUser && _user!.isAdmin == true)
+        if (!_isLoadingUser  &&  _user!.isAdmin == true)
           IconButton(
             icon: const Icon(Icons.info_outline_rounded,
                 color: Colors.white, size: 30),

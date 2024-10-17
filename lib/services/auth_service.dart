@@ -103,6 +103,7 @@ class AuthService {
     await prefs.setString('user_name', user.name);
     await prefs.setString('user_email', user.email);
     await prefs.setString('user_profile', user.profileUrl);
+    await prefs.setString('isAdmin', user.isAdmin as String);
   }
 
   // Clear stored user data from SharedPreferences
