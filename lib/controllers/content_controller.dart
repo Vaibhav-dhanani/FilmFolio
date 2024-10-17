@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:filmfolio/controllers/usercontent_controller.dart';
+import 'package:filmfolio/models/content_create_track.dart';
 import 'package:filmfolio/models/review.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:filmfolio/models/movie.dart';
 
 class ContentController {
   List<Movie> movies = [];
+  final UserContentController _userContentController = UserContentController();
   final CollectionReference _movieCollection =
   FirebaseFirestore.instance.collection("contents");
 
@@ -26,6 +29,7 @@ class ContentController {
 
   Future<void> removeMovie(String id) async {
     await _movieCollection.doc(id).delete();
+    await _userContentController.deleteByContentId(id);
     movies.removeWhere((movie) => movie.id == id);
   }
 

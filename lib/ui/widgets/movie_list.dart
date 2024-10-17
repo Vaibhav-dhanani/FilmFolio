@@ -1,6 +1,5 @@
 import 'package:filmfolio/controllers/user_controller.dart';
 import 'package:filmfolio/models/movie.dart';
-import 'package:filmfolio/models/user.dart';
 import 'package:filmfolio/ui/screens/movie_detail_screen.dart';
 import 'package:flutter/material.dart';
 

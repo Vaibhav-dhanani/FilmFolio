@@ -1,12 +1,13 @@
+import 'package:filmfolio/controllers/content_controller.dart';
+import 'package:filmfolio/controllers/user_controller.dart';
+import 'package:filmfolio/controllers/usercontent_controller.dart';
+import 'package:filmfolio/models/movie.dart';
+import 'package:filmfolio/models/user.dart';
+import 'package:filmfolio/ui/screens/movie_creater.dart';
+import 'package:filmfolio/ui/widgets/movie_list.dart';
+import 'package:filmfolio/ui/widgets/movie_slideshow.dart';
 import 'package:filmfolio/ui/widgets/search_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:filmfolio/controllers/user_controller.dart';
-import 'package:filmfolio/controllers/content_controller.dart';
-import 'package:filmfolio/models/user.dart';
-import 'package:filmfolio/models/movie.dart';
-import 'package:filmfolio/ui/widgets/movie_list.dart';
-import 'package:filmfolio/ui/widgets/add_movie_form.dart';
-import 'package:filmfolio/ui/widgets/movie_slideshow.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,10 +19,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ContentController _contentController = ContentController();
   final UserController _userController = UserController();
+  final UserContentController dummy = UserContentController();
   List<Movie> _allMovies = [];
   List<Movie> _displayedMovies = [];
   User? _user;
   late SearchHelper _searchHelper;
+  bool _isLoadingUser = true;
 
   @override
   void initState() {
@@ -33,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeData();
   }
 
-
   Future<void> _initializeData() async {
     await Future.wait([
       _fetchMovies(),
@@ -44,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchUser() async {
     final user = await _userController.loadUserFromLocalStorage();
-    setState(() => _user = user);
+    setState(() {
+      _user = user;
+      _isLoadingUser = false;
+    });
   }
 
   Future<void> _fetchMovies() async {
@@ -55,22 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _addMovie(Movie movie) async {
-    await _contentController.addMovie(movie);
-    _fetchMovies();
-  }
-
   void _performSearch(String query) {
     setState(() {
       if (query.isEmpty) {
         _displayedMovies = _allMovies;
       } else {
-        _displayedMovies = _allMovies.where((movie) =>
-        movie.name.toLowerCase().contains(query.toLowerCase()) ||
-            movie.categories.any((category) =>
-                category.toLowerCase().contains(query.toLowerCase())
-            )
-        ).toList();
+        _displayedMovies = _allMovies
+            .where((movie) =>
+                movie.name.toLowerCase().contains(query.toLowerCase()) ||
+                movie.categories.any((category) =>
+                    category.toLowerCase().contains(query.toLowerCase())))
+            .toList();
       }
     });
   }
@@ -102,30 +102,47 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _buildBody(),
           ),
         ),
-        floatingActionButton: _buildFloatingActionButton(),
       ),
     );
   }
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: _searchHelper.isSearching ? _searchHelper.buildSearchField() : const Text(
-        'FILMFOLIO',
-        style: TextStyle(
-          fontSize: 26.0,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.5,
-          color: Colors.amber,
-        ),
-      ),
+      title: _searchHelper.isSearching
+          ? _searchHelper.buildSearchField()
+          : const Text(
+              'FILMFOLIO',
+              style: TextStyle(
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+                color: Colors.amber,
+              ),
+            ),
       backgroundColor: Colors.black,
       elevation: 2.0,
       actions: [
         IconButton(
-          icon: Icon(_searchHelper.isSearching ? Icons.close : Icons.search,
-              color: Colors.white, size: 30),
+          icon: Icon(
+            _searchHelper.isSearching ? Icons.close : Icons.search,
+            color: Colors.white,
+            size: 30,
+          ),
           onPressed: _searchHelper.toggleSearch,
         ),
+        if (!_isLoadingUser && _user!.isAdmin == true)
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded,
+                color: Colors.white, size: 30),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieCreatorsPage(),
+                ),
+              );
+            },
+          ),
       ],
     );
   }
@@ -171,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(30),
             image: DecorationImage(
               image: NetworkImage(
-                _user?.profileUrl ?? "https://example.com/default-avatar.jpg",
+                _user?.profileUrl ??
+                    "https://imgs.search.brave.com/SMPQEU6hs_kEFGfDbP-8datnmpThKtzFWgQMUXJiw2Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzEyL1VzZXJfaWNv/bl8yLnN2Zw",
               ),
               fit: BoxFit.cover,
             ),
@@ -217,8 +235,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMovieCategories() {
     final categories = [
-      "Anime", "Horror", "Romantic", "Science-fiction", "Action",
-      "Comedy", "Documentary", "Drama", "Fantasy", "Mystery", "Thriller",
+      "Anime",
+      "Horror",
+      "Romantic",
+      "Science-fiction",
+      "Action",
+      "Comedy",
+      "Documentary",
+      "Drama",
+      "Fantasy",
+      "Mystery",
+      "Thriller",
     ];
     return Column(
       children: categories.map((category) {
@@ -250,9 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  // TODO: Implement "See All" functionality
-                },
+                onTap: () {},
                 child: const Text(
                   "See All",
                   style: TextStyle(
@@ -270,20 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: Colors.amber,
-      elevation: 6.0,
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => AddMoviePage(onMovieAdded: _addMovie),
-          ),
-        );
-      },
-      child: const Icon(Icons.add, color: Colors.black),
-    );
-  }
   @override
   void dispose() {
     _searchHelper.dispose();

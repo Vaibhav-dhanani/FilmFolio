@@ -44,6 +44,23 @@ class UserController {
     return null;
   }
 
+  Future<User?> getUserById(String userId) async {
+    try {
+      final userDoc = await _usersCollection.doc(userId).get();
+
+      if (userDoc.exists) {
+        return User.fromJson(userDoc.data() as Map<String, dynamic>);
+      } else {
+        print('User with ID $userId not found');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user with ID $userId: $e');
+      return null;
+    }
+  }
+
+
   Future<void> updateUser(String name, String email, String profileUrl) async {
     if (_currentUser != null) {
       _currentUser = User(
